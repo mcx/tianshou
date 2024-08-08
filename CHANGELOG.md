@@ -2,7 +2,7 @@
 
 ## Release 1.1.0
 
-### Api Extensions
+### Changes/Improvements
 - `evaluation`: New package for repeating the same experiment with multiple seeds and aggregating the results. #1074 #1141 #1183
 - `data`:
   - `Batch`:
@@ -54,9 +54,13 @@
     - `DataclassPPrintMixin` now supports outputting a string, not just printing the pretty repr. #1141
 
 ### Fixes
-- `CriticFactoryReuseActor`: Enable the Critic flag `apply_preprocess_net_to_obs_only` for continuous critics, 
-  fixing the case where we want to reuse an actor's preprocessing network for the critic (affects usages
-  of the experiment builder method `with_critic_factory_use_actor` with continuous environments) #1128
+- `highlevel`:
+  - `CriticFactoryReuseActor`: Enable the Critic flag `apply_preprocess_net_to_obs_only` for continuous critics, 
+    fixing the case where we want to reuse an actor's preprocessing network for the critic (affects usages
+    of the experiment builder method `with_critic_factory_use_actor` with continuous environments) #1128
+  - Policy parameter `action_scaling` value `"default"` was not correctly transformed to a Boolean value for 
+    algorithms SAC, DDPG, TD3 and REDQ. The value `"default"` being truthy caused action scaling to be enabled
+    even for discrete action spaces. #1191
 - `atari_network.DQN`:
   - Fix constructor input validation #1128
   - Fix `output_dim` not being set if `features_only`=True and `output_dim_added_layer` is not None #1128
@@ -103,6 +107,11 @@ continuous and discrete cases. #1032
 - `utils.net.common.Recurrent` now receives and returns a `RecurrentStateBatch` instead of a dict. #1077
 - `AtariEnvFactory` constructor (in examples, so not really breaking) now requires explicit train and test seeds. #1074
 - `EnvFactoryRegistered` now requires an explicit `test_seed` in the constructor. #1074
+- `highlevel`:
+  - The parameter `dist_fn` has been removed from the parameter objects (`PGParams`, `A2CParams`, `PPOParams`, `NPGParams`, `TRPOParams`).
+    The correct distribution is now determined automatically based on the actor factory being used, avoiding the possibility of 
+    misspecification. Persisted configurations/policies continue to work as expected, but code must not specify the `dist_fn` parameter.
+    #1194 #1195
 
 
 ### Tests
